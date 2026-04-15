@@ -4,578 +4,591 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="Garage Ceglie">
+<meta name="theme-color" content="#1a2a52">
 <title>Garage Ceglie - Ticket</title>
-<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  :root {
+    --navy: #1a2a52;
+    --navy-light: #243664;
+    --orange: #e8561d;
+    --cream: #f8f5f0;
+    --warm-white: #fefcf9;
+    --border: #e0dbd3;
+    --text: #2c2c2c;
+    --text-light: #8a8378;
+  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
   body {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-    margin: 0;
-    padding: 16px 16px 40px;
-    background: #0f0f10;
-    color: #fff;
-    min-height: 100vh;
+    font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--cream); color: var(--text);
+    min-height: 100vh; padding-bottom: 40px;
   }
-  h1 {
-    font-family: 'Oswald', sans-serif;
-    font-size: 24px;
-    font-weight: 800;
-    margin: 0 0 4px;
-    text-align: center;
-    color: #1a2a52;
-    letter-spacing: 1px;
-    -webkit-text-stroke: 0.5px #ff6a1f;
+  .header {
+    background: var(--navy);
+    padding: 24px 20px 28px;
+    text-align: center; position: relative;
   }
-  .subtitle {
-    text-align: center;
-    font-size: 11px;
-    color: #666;
-    margin-bottom: 20px;
-    text-transform: uppercase;
-    letter-spacing: 1.5px;
+  .header::after {
+    content: ''; position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 4px; background: var(--orange);
   }
-  .field { margin-bottom: 12px; }
-  label {
-    display: block;
-    font-size: 11px;
-    color: #888;
-    margin-bottom: 5px;
-    text-transform: uppercase;
-    letter-spacing: 0.8px;
-    font-weight: 600;
+  .header h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 38px; color: #fff;
+    letter-spacing: 4px; line-height: 1; margin-bottom: 4px;
   }
-  input {
-    width: 100%;
-    padding: 12px 14px;
-    font-size: 16px;
-    border: 1px solid #2e2e35;
-    border-radius: 10px;
-    background: #17171a;
-    color: #fff;
-    -webkit-appearance: none;
-    font-family: inherit;
+  .header .addr {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 16px; color: var(--orange); letter-spacing: 3px;
   }
-  input:focus { outline: none; border-color: #ff6a1f; }
-  input[type="date"] { color-scheme: dark; }
+  .form-wrap { padding: 20px 16px; }
+  .section-label {
+    font-size: 11px; font-weight: 700;
+    color: var(--text-light); text-transform: uppercase;
+    letter-spacing: 1.5px; margin-bottom: 10px; margin-top: 20px;
+  }
+  .section-label:first-child { margin-top: 0; }
+  .field { margin-bottom: 10px; }
+  .field label {
+    display: block; font-size: 12px; font-weight: 600;
+    color: var(--navy); margin-bottom: 5px;
+    text-transform: uppercase; letter-spacing: 0.5px;
+  }
+  .field input {
+    width: 100%; padding: 14px 16px; font-size: 16px;
+    border: 2px solid var(--border); border-radius: 12px;
+    background: var(--warm-white); color: var(--text);
+    font-family: inherit; -webkit-appearance: none;
+    transition: border-color 0.2s;
+  }
+  .field input:focus { outline: none; border-color: var(--navy); }
+  .field input[type="date"] { color-scheme: light; }
+  .field .optional {
+    font-size: 10px; color: var(--text-light);
+    text-transform: none; letter-spacing: 0; font-weight: 400;
+  }
   .row { display: flex; gap: 10px; }
   .row .field { flex: 1; }
-
-  /* Durata buttons */
-  .duration-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 8px;
-    margin-bottom: 12px;
-  }
-  .dur-btn {
-    padding: 14px 6px;
-    border: 2px solid #2e2e35;
-    border-radius: 10px;
-    background: #17171a;
-    color: #aaa;
-    font-family: 'Oswald', sans-serif;
-    font-size: 18px;
-    font-weight: 700;
-    text-align: center;
-    cursor: pointer;
-    transition: all 0.15s;
-  }
-  .dur-btn .price {
-    display: block;
-    font-family: 'Inter', sans-serif;
-    font-size: 13px;
-    font-weight: 600;
-    margin-top: 2px;
-    color: #666;
-  }
-  .dur-btn.active {
-    border-color: #ff6a1f;
-    background: #2a1a10;
-    color: #ff6a1f;
-  }
-  .dur-btn.active .price { color: #ff6a1f; }
-
-  /* Category toggle */
   .cat-toggle {
-    display: flex;
-    gap: 0;
-    border-radius: 10px;
-    overflow: hidden;
-    border: 2px solid #2e2e35;
-    margin-bottom: 12px;
+    display: flex; border-radius: 12px; overflow: hidden;
+    border: 2px solid var(--border); background: var(--warm-white);
   }
   .cat-btn {
-    flex: 1;
-    padding: 12px 8px;
-    background: #17171a;
-    color: #888;
-    border: none;
-    font-family: inherit;
-    font-size: 13px;
-    font-weight: 600;
-    cursor: pointer;
-    text-align: center;
-    transition: all 0.15s;
+    flex: 1; padding: 13px 8px; background: transparent;
+    color: var(--text-light); border: none;
+    font-family: inherit; font-size: 13px; font-weight: 600;
+    cursor: pointer; text-align: center; transition: all 0.2s;
   }
-  .cat-btn.active {
-    background: #1a2a52;
-    color: #fff;
+  .cat-btn.active { background: var(--navy); color: #fff; }
+  .cat-hint {
+    font-size: 11px; color: var(--orange);
+    text-align: center; margin-top: 6px;
+    min-height: 16px; font-weight: 500;
   }
-  .cat-auto-hint {
-    font-size: 11px;
-    color: #555;
-    text-align: center;
-    margin-top: -8px;
-    margin-bottom: 12px;
+  .duration-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;
   }
-
-  /* Buttons */
-  button.main {
-    width: 100%;
-    padding: 15px;
-    font-size: 16px;
-    font-weight: 600;
-    border: none;
-    border-radius: 10px;
-    background: #ff6a1f;
-    color: #fff;
-    margin-top: 6px;
-    cursor: pointer;
-    font-family: inherit;
+  .dur-btn {
+    padding: 16px 6px 14px;
+    border: 2px solid var(--border); border-radius: 12px;
+    background: var(--warm-white); color: var(--text-light);
+    font-family: 'Bebas Neue', sans-serif; font-size: 22px;
+    text-align: center; cursor: pointer;
+    transition: all 0.2s; line-height: 1;
   }
-  button.main:active { background: #e55a10; }
-  button.whatsapp {
-    width: 100%;
-    padding: 15px;
-    font-size: 16px;
-    font-weight: 600;
-    border: none;
-    border-radius: 10px;
-    background: #25d366;
-    color: #fff;
-    margin-top: 8px;
-    cursor: pointer;
-    font-family: inherit;
+  .dur-btn .price {
+    display: block; font-family: 'DM Sans', sans-serif;
+    font-size: 14px; font-weight: 700; margin-top: 4px;
+    color: var(--text-light);
   }
-  button.whatsapp:active { background: #1ea952; }
-  button.secondary {
-    width: 100%;
-    padding: 14px;
-    font-size: 15px;
-    font-weight: 600;
-    border: 1px solid #2e2e35;
-    border-radius: 10px;
-    background: #17171a;
-    color: #ccc;
-    margin-top: 6px;
-    cursor: pointer;
-    font-family: inherit;
+  .dur-btn.active { border-color: var(--orange); background: #fdf0ea; color: var(--orange); }
+  .dur-btn.active .price { color: var(--orange); }
+  .btn-genera {
+    width: 100%; padding: 16px; font-size: 16px; font-weight: 700;
+    border: none; border-radius: 12px;
+    background: var(--navy); color: #fff;
+    margin-top: 20px; cursor: pointer;
+    font-family: inherit; letter-spacing: 0.5px;
   }
-  button.ghost {
-    width: 100%;
-    padding: 12px;
-    background: transparent;
-    border: 1px solid #2e2e35;
-    border-radius: 10px;
-    color: #666;
-    font-size: 14px;
-    font-weight: 500;
-    margin-top: 6px;
-    cursor: pointer;
-    font-family: inherit;
+  .btn-genera:active { background: var(--navy-light); }
+  .btn-share {
+    width: 100%; padding: 15px; font-size: 15px; font-weight: 700;
+    border: none; border-radius: 12px;
+    background: #25d366; color: #fff;
+    margin-top: 10px; cursor: pointer; font-family: inherit;
   }
-  #preview {
-    margin-top: 18px;
-    text-align: center;
+  .btn-share:active { background: #1ea952; }
+  .btn-reset {
+    width: 100%; padding: 13px;
+    background: transparent; border: 2px solid var(--border);
+    border-radius: 12px; color: var(--text-light);
+    font-size: 14px; font-weight: 600;
+    margin-top: 8px; cursor: pointer; font-family: inherit;
   }
+  #preview { margin-top: 20px; text-align: center; padding: 0 16px; }
   #preview img {
-    max-width: 100%;
-    height: auto;
-    border-radius: 10px;
-    box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+    max-width: 100%; height: auto; border-radius: 12px;
+    box-shadow: 0 8px 30px rgba(26,42,82,0.08), 0 2px 8px rgba(0,0,0,0.06);
   }
+  .share-hint {
+    display: none; background: var(--warm-white);
+    border: 2px solid #25d366; border-radius: 12px;
+    padding: 14px 18px; margin: 12px 16px 0; text-align: center;
+  }
+  .share-hint .sh-title { font-size: 14px; font-weight: 700; color: #25d366; margin-bottom: 4px; }
+  .share-hint .sh-desc { font-size: 12px; color: var(--text-light); line-height: 1.4; }
 </style>
 </head>
 <body>
 
-<h1>GARAGE CEGLIE</h1>
-<div class="subtitle">Generatore ticket prenotazione</div>
-
-<div class="field">
-  <label>Auto (modello)</label>
-  <input id="autoModello" type="text" placeholder="es. BMW X1" autocomplete="off" oninput="autoDetectCategory()">
+<div class="header">
+  <h1>GARAGE CEGLIE</h1>
+  <div class="addr">VIA MELO, 10/14 · BARI</div>
 </div>
 
-<div class="field">
-  <label>Targa</label>
-  <input id="autoTarga" type="text" placeholder="es. GV733SW" autocomplete="off" style="text-transform:uppercase">
-</div>
-
-<div class="field">
-  <label>Nome</label>
-  <input id="nome" type="text" placeholder="es. La Rezza" autocomplete="off">
-</div>
-
-<div class="row">
+<div class="form-wrap">
+  <div class="section-label">Dati veicolo</div>
   <div class="field">
-    <label>Arrivo</label>
-    <input id="arrivo" type="date" autocomplete="off">
+    <label>Auto</label>
+    <input id="autoModello" type="text" placeholder="BMW X1, Fiat Panda..." autocomplete="off" oninput="autoDetectCategory()">
   </div>
   <div class="field">
-    <label>Partenza</label>
-    <input id="partenza" type="date" autocomplete="off">
+    <label>Targa</label>
+    <input id="autoTarga" type="text" placeholder="AB123CD" autocomplete="off" style="text-transform:uppercase">
   </div>
+  <div class="field">
+    <label>Nome cliente</label>
+    <input id="nome" type="text" placeholder="Cognome o nome" autocomplete="off">
+  </div>
+
+
+  <div class="section-label">Periodo</div>
+  <div class="row">
+    <div class="field">
+      <label>Arrivo</label>
+      <input id="arrivo" type="date" autocomplete="off">
+    </div>
+    <div class="field">
+      <label>Partenza</label>
+      <input id="partenza" type="date" autocomplete="off">
+    </div>
+  </div>
+
+  <div class="section-label">Categoria veicolo</div>
+  <div class="cat-toggle">
+    <button class="cat-btn active" onclick="setCategory('standard')" id="catStd">Standard</button>
+    <button class="cat-btn" onclick="setCategory('grande')" id="catGrande">Grande / SUV / Premium</button>
+  </div>
+  <div class="cat-hint" id="catHint"></div>
+
+  <div class="section-label">Durata</div>
+  <div class="duration-grid" id="durGrid"></div>
+
+  <div style="display:flex; align-items:center; justify-content:space-between; margin-top:20px; padding:12px 16px; background:var(--warm-white); border:2px solid var(--border); border-radius:12px;">
+    <div>
+      <div style="font-size:11px; color:var(--text-light); text-transform:uppercase; letter-spacing:1px; font-weight:600;">Prossimo ticket</div>
+      <div style="font-size:22px; font-weight:700; color:var(--navy); font-family:'Bebas Neue',sans-serif; letter-spacing:1px;">GC-<span id="nextDisplay">1</span></div>
+      <div style="font-size:11px; color:var(--text-light); display:none;">Ultimo emesso: #<span id="counterDisplay">0</span></div>
+    </div>
+    <button onclick="setCounter()" style="padding:8px 14px; font-size:12px; font-weight:600; border:1px solid var(--border); border-radius:8px; background:transparent; color:var(--text-light); cursor:pointer; font-family:inherit;">Modifica n.</button>
+  </div>
+
+  <button class="btn-genera" onclick="genera()">Genera ticket</button>
 </div>
-
-<label>Categoria veicolo</label>
-<div class="cat-toggle">
-  <button class="cat-btn active" onclick="setCategory('standard')" id="catStd">Standard</button>
-  <button class="cat-btn" onclick="setCategory('grande')" id="catGrande">Grande / SUV / Premium</button>
-</div>
-<div class="cat-auto-hint" id="catHint"></div>
-
-<label>Durata ticket</label>
-<div class="duration-grid" id="durGrid"></div>
-
-<button class="main" onclick="genera()">Genera ticket</button>
-<button class="ghost" onclick="reset()">Pulisci tutto</button>
 
 <div id="preview"></div>
-<div id="shareHint" style="display:none; background:#1a2a1a; border:1px solid #25d366; border-radius:12px; padding:14px 18px; margin-top:12px; text-align:center;">
-  <div style="font-size:14px; font-weight:600; color:#25d366; margin-bottom:4px;">📱 Tieni premuto sull'immagine qui sopra</div>
-  <div style="font-size:12px; color:#aaa;">→ "Condividi immagine" per WhatsApp<br>→ "Salva immagine" per la galleria</div>
+<div class="share-hint" id="shareHint">
+  <div class="sh-title">📱 Tieni premuto sull'immagine</div>
+  <div class="sh-desc">→ Condividi immagine (WhatsApp, Telegram...)<br>→ Salva immagine (galleria)</div>
 </div>
-<button class="whatsapp" onclick="tentaCondivisione()" id="waBtn" style="display:none">📱 Condividi</button>
+<div style="padding: 0 16px;">
+  <button class="btn-share" onclick="tentaCondivisione()" id="waBtn" style="display:none">Condividi ticket</button>
+  <button class="btn-reset" onclick="reset()">Pulisci tutto</button>
+</div>
 
-<canvas id="canvas" width="900" height="1280" style="display:none"></canvas>
+<canvas id="canvas" width="1000" height="1750" style="display:none"></canvas>
 
 <script>
-// ============ LISTINO ============
-const PREZZI = {
+var PREZZI = {
   standard: { '12H': 30, '18H': 35, '24H': 40, '48H': 70, '72H': 100, '96H': 140 },
   grande:   { '12H': 35, '18H': 40, '24H': 45, '48H': 75, '72H': 110, '96H': 150 }
 };
-const DURATE = ['12H','18H','24H','48H','72H','96H'];
-
-// Modelli "grandi"
-const GRANDI_KEYWORDS = [
+var DURATE = ['12H','18H','24H','48H','72H','96H'];
+var GRANDI_KEYWORDS = [
   '7 posti','7posti','pickup','pick-up','pick up',
   'x7','x6','x5','q7','q8','gle','gls','espace','touareg','velar','a8',
   'wrangler','5008','jaguar','freemont','evo7','xc90','xc 90',
-  'range rover','range','defender','sport','byd',
+  'range rover','range','defender','byd',
   'porsche','cayenne','macan','panamera','taycan','911','718','cayman','boxster',
   'grand cherokee','cherokee','freelander','maserati',
   'ghibli','levante','grecale','quattroporte',
-  'urus','bentayga','cullinan',
-  'escalade','navigator','tahoe','suburban',
-  'gl','gla','glb','glc','g class','classe g','amg gt',
-  'q5','q3','e-tron','etron',
-  'tiguan allspace','atlas','id.4','id4',
-  'cx-60','cx60','cx-90','cx90',
+  'urus','bentayga','cullinan','escalade','navigator','tahoe','suburban',
+  'classe g','g class','amg gt','q5','q3','e-tron','etron',
+  'tiguan allspace','atlas','cx-60','cx60','cx-90','cx90',
   'tucson','santa fe','sorento','sportage',
-  'rav4','highlander','land cruiser',
-  'discovery','evoque','velar',
-  'xc40','xc60',
-  'peugeot 3008','peugeot 5008','3008',
-  'duster','koleos',
-  'c5 aircross','c5x',
-  'forester','outback',
-  'compass','renegade',
-  'alfa stelvio','stelvio',
-  'tonale'
+  'rav4','highlander','land cruiser','discovery','evoque',
+  'xc40','xc60','peugeot 3008','3008','duster','koleos',
+  'c5 aircross','c5x','forester','outback',
+  'compass','renegade','stelvio','tonale'
 ];
 
-let currentCategory = 'standard';
-let currentDurata = null;
+var currentCategory = 'standard';
+var currentDurata = null;
 
 function renderDurate() {
-  const grid = document.getElementById('durGrid');
+  var grid = document.getElementById('durGrid');
   grid.innerHTML = '';
-  DURATE.forEach(d => {
-    const btn = document.createElement('div');
+  DURATE.forEach(function(d) {
+    var btn = document.createElement('div');
     btn.className = 'dur-btn' + (currentDurata === d ? ' active' : '');
-    btn.innerHTML = `${d}<span class="price">€${PREZZI[currentCategory][d]}</span>`;
-    btn.onclick = () => { currentDurata = d; renderDurate(); };
+    btn.innerHTML = d + '<span class="price">\u20AC' + PREZZI[currentCategory][d] + '</span>';
+    btn.onclick = function() { currentDurata = d; renderDurate(); };
     grid.appendChild(btn);
   });
 }
-
 function setCategory(cat) {
   currentCategory = cat;
   document.getElementById('catStd').className = 'cat-btn' + (cat === 'standard' ? ' active' : '');
   document.getElementById('catGrande').className = 'cat-btn' + (cat === 'grande' ? ' active' : '');
   renderDurate();
 }
-
 function autoDetectCategory() {
-  const val = document.getElementById('autoModello').value.toLowerCase().trim();
+  var val = document.getElementById('autoModello').value.toLowerCase().trim();
   if (!val) { document.getElementById('catHint').textContent = ''; return; }
+  var isGrande = GRANDI_KEYWORDS.some(function(kw) { return val.includes(kw); });
+  if (isGrande) { setCategory('grande'); document.getElementById('catHint').textContent = '\u2191 Veicolo grande/premium rilevato'; }
+  else { setCategory('standard'); document.getElementById('catHint').textContent = ''; }
+}
+renderDurate();
+initCounter();
 
-  const isGrande = GRANDI_KEYWORDS.some(kw => val.includes(kw));
-  if (isGrande) {
-    setCategory('grande');
-    document.getElementById('catHint').textContent = '⬆ Rilevato veicolo grande/premium';
-  } else {
-    setCategory('standard');
-    document.getElementById('catHint').textContent = '';
+function formatDate(iso) {
+  var p = iso.split('-');
+  return parseInt(p[2]) + '/' + parseInt(p[1]);
+}
+function formatDateFull(iso) {
+  var p = iso.split('-');
+  return p[2] + '/' + p[1] + '/' + p[0];
+}
+function padZero(n) { return n < 10 ? '0' + n : '' + n; }
+
+function getNextBookingNumber() {
+  var current = parseInt(localStorage.getItem('gc_ticket_counter') || '0');
+  current++;
+  localStorage.setItem('gc_ticket_counter', current.toString());
+  document.getElementById('counterDisplay').textContent = current;
+  var next = ('0000' + (current + 1)).slice(-4);
+  document.getElementById('nextDisplay').textContent = next;
+  return current;
+}
+function formatBookingId(n) {
+  var s = '0000' + n;
+  return 'GC-' + s.slice(-4);
+}
+function initCounter() {
+  var current = parseInt(localStorage.getItem('gc_ticket_counter') || '0');
+  document.getElementById('counterDisplay').textContent = current;
+  var next = ('0000' + (current + 1)).slice(-4);
+  document.getElementById('nextDisplay').textContent = next;
+}
+function setCounter() {
+  var val = prompt('Imposta il prossimo numero di prenotazione:', parseInt(localStorage.getItem('gc_ticket_counter') || '0') + 1);
+  if (val !== null && !isNaN(parseInt(val))) {
+    localStorage.setItem('gc_ticket_counter', (parseInt(val) - 1).toString());
+    initCounter();
   }
 }
 
-// Init
-renderDurate();
-
-// ============ HELPERS ============
-function formatDate(isoDate) {
-  const [y, m, d] = isoDate.split('-');
-  return parseInt(d) + '/' + parseInt(m);
+function getEmissionDateTime() {
+  var now = new Date();
+  var d = padZero(now.getDate()) + '/' + padZero(now.getMonth()+1) + '/' + now.getFullYear();
+  var t = padZero(now.getHours()) + ':' + padZero(now.getMinutes());
+  return d + '  ore ' + t;
 }
 
-// ============ GENERATORE CANVAS ============
+function roundRect(ctx, x, y, w, h, r) {
+  ctx.beginPath();
+  ctx.moveTo(x+r,y); ctx.lineTo(x+w-r,y);
+  ctx.quadraticCurveTo(x+w,y,x+w,y+r); ctx.lineTo(x+w,y+h-r);
+  ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h); ctx.lineTo(x+r,y+h);
+  ctx.quadraticCurveTo(x,y+h,x,y+h-r); ctx.lineTo(x,y+r);
+  ctx.quadraticCurveTo(x,y,x+r,y); ctx.closePath();
+}
+
+function wrapText(ctx, text, x, maxW, lineH) {
+  var words = text.split(' ');
+  var line = '';
+  var y = 0;
+  var lines = [];
+  for (var i = 0; i < words.length; i++) {
+    var test = line + words[i] + ' ';
+    if (ctx.measureText(test).width > maxW && line !== '') {
+      lines.push(line.trim());
+      line = words[i] + ' ';
+    } else {
+      line = test;
+    }
+  }
+  lines.push(line.trim());
+  return lines;
+}
+
 function genera() {
   if (!currentDurata) { alert('Seleziona la durata del ticket'); return; }
 
-  const canvas = document.getElementById('canvas');
-  const ctx = canvas.getContext('2d');
-  const W = canvas.width;
-  const H = canvas.height;
+  var canvas = document.getElementById('canvas');
+  var ctx = canvas.getContext('2d');
+  var W = canvas.width, H = canvas.height;
+  var bookingNum = getNextBookingNumber();
+  var bookingId = formatBookingId(bookingNum);
+  var emesso = getEmissionDateTime();
 
-  // Sfondo carta
-  const grad = ctx.createLinearGradient(0, 0, 0, H);
-  grad.addColorStop(0, '#fdfdfb');
-  grad.addColorStop(1, '#f5f4ee');
-  ctx.fillStyle = grad;
-  ctx.fillRect(0, 0, W, H);
+  // Sfondo
+  ctx.fillStyle = '#f8f5f0';
+  ctx.fillRect(0,0,W,H);
 
-  // Bordo nastro adesivo
-  ctx.fillStyle = 'rgba(210, 200, 160, 0.5)';
-  ctx.fillRect(40, 35, W - 80, 16);
-  ctx.fillStyle = 'rgba(180, 170, 130, 0.25)';
-  ctx.fillRect(40, 48, W - 80, 3);
+  // Bordo esterno
+  ctx.strokeStyle = '#d4cfc7'; ctx.lineWidth = 3;
+  ctx.strokeRect(24,24,W-48,H-48);
 
-  // Linea decorativa sopra titolo
-  ctx.fillStyle = '#ff6a1f';
-  ctx.fillRect(W/2 - 120, 90, 240, 4);
+  // Bordo interno sottile
+  ctx.strokeStyle = '#e8e3db'; ctx.lineWidth = 1;
+  ctx.strokeRect(36,36,W-72,H-72);
+
+  // === HEADER ===
+  var hH = 200;
+  ctx.fillStyle = '#1a2a52';
+  ctx.fillRect(36,36,W-72,hH);
+
+  // Riga arancione
+  ctx.fillStyle = '#e8561d';
+  ctx.fillRect(36,36+hH,W-72,6);
 
   // Titolo
-  ctx.fillStyle = '#1a2a52';
-  ctx.font = '800 78px "Oswald", "Arial Black", sans-serif';
-  ctx.textAlign = 'center';
-  ctx.textBaseline = 'alphabetic';
-  ctx.fillText('GARAGE CEGLIE', W / 2, 172);
-
-  // Ombra rossa dietro il titolo (effetto insegna)
-  ctx.save();
-  ctx.fillStyle = 'rgba(255, 106, 31, 0.15)';
-  ctx.font = '800 78px "Oswald", "Arial Black", sans-serif';
-  ctx.fillText('GARAGE CEGLIE', W / 2 + 2, 174);
-  ctx.restore();
-  // Riscrivi sopra pulito
-  ctx.fillStyle = '#1a2a52';
-  ctx.font = '800 78px "Oswald", "Arial Black", sans-serif';
-  ctx.fillText('GARAGE CEGLIE', W / 2, 172);
-
-  // Sottotitolo
-  ctx.fillStyle = '#ff6a1f';
-  ctx.font = '700 30px "Oswald", Arial, sans-serif';
-  ctx.fillText('VIA MELO, 10/14  ·  BARI', W / 2, 212);
-
-  // Linea sotto
-  ctx.fillStyle = '#1a2a52';
-  ctx.fillRect(W/2 - 80, 232, 160, 2);
-
-  // === TABELLA ===
-  const tableX = 70;
-  const tableY = 270;
-  const tableW = W - 140;
-  const headerH = 70;
-  const rowH = 105;
-  const labelColW = 260;
-  const numRows = 6; // Auto, Nome, Arrivo, Partenza, Ticket, Prezzo
-
-  // Ombra tabella
-  ctx.fillStyle = 'rgba(0,0,0,0.06)';
-  ctx.fillRect(tableX + 5, tableY + 5, tableW, headerH + rowH * numRows);
-
-  // Header "Prenotazione"
-  const hGrad = ctx.createLinearGradient(tableX, tableY, tableX, tableY + headerH);
-  hGrad.addColorStop(0, '#ff7a2f');
-  hGrad.addColorStop(1, '#ff5a0f');
-  ctx.fillStyle = hGrad;
-  ctx.fillRect(tableX, tableY, tableW, headerH);
-  ctx.strokeStyle = '#1a2a52';
-  ctx.lineWidth = 3;
-  ctx.strokeRect(tableX, tableY, tableW, headerH);
-
   ctx.fillStyle = '#fff';
-  ctx.font = '700 40px "Oswald", Arial, sans-serif';
-  ctx.textAlign = 'center';
-  ctx.textBaseline = 'middle';
-  ctx.letterSpacing = '2px';
-  ctx.fillText('PRENOTAZIONE', tableX + tableW / 2, tableY + headerH / 2 + 2);
+  ctx.font = '88px "Bebas Neue", sans-serif';
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.fillText('GARAGE CEGLIE', W/2, 36+hH/2-20);
 
-  // Dati
-  const autoModello = document.getElementById('autoModello').value.trim();
-  const autoTarga = document.getElementById('autoTarga').value.trim().toUpperCase();
-  const nome = document.getElementById('nome').value.trim();
-  const arrivoRaw = document.getElementById('arrivo').value;
-  const partenzaRaw = document.getElementById('partenza').value;
-  const arrivo = arrivoRaw ? formatDate(arrivoRaw) : '';
-  const partenza = partenzaRaw ? formatDate(partenzaRaw) : '';
-  const prezzo = '€' + PREZZI[currentCategory][currentDurata] + ',00';
-  const ticketLabel = 'Ticket ' + currentDurata;
-  const catLabel = currentCategory === 'grande' ? ' (grande)' : '';
+  // Indirizzo
+  ctx.fillStyle = '#e8561d';
+  ctx.font = '28px "Bebas Neue", sans-serif';
+  ctx.fillText('VIA MELO, 10/14  \u00B7  BARI', W/2, 36+hH/2+38);
 
-  const righe = [
-    { label: 'Auto', value: autoModello, value2: autoTarga },
-    { label: 'Nome', value: nome },
-    { label: 'Giorno\narrivo', value: arrivo, labelMultiline: true },
-    { label: 'Giorno\npartenza', value: partenza, labelMultiline: true },
-    { label: 'Ticket', value: ticketLabel + catLabel },
-    { label: 'Importo', value: prezzo, highlight: true }
+  // === NUMERO PRENOTAZIONE ===
+  var numY = 36+hH+6+28;
+  ctx.fillStyle = '#8a8378';
+  ctx.font = '500 20px "DM Sans", sans-serif';
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.fillText('Prenotazione n.', W/2, numY);
+
+  ctx.fillStyle = '#1a2a52';
+  ctx.font = '700 32px "DM Sans", sans-serif';
+  ctx.fillText(bookingId, W/2, numY + 38);
+
+  ctx.fillStyle = '#b0a89e';
+  ctx.font = '400 18px "DM Sans", sans-serif';
+  ctx.fillText('Emesso il ' + emesso, W/2, numY + 72);
+
+  // Linea separatrice
+  var sepY = numY + 100;
+  ctx.strokeStyle = '#d4cfc7'; ctx.lineWidth = 1.5;
+  ctx.setLineDash([6,4]);
+  ctx.beginPath(); ctx.moveTo(70, sepY); ctx.lineTo(W-70, sepY); ctx.stroke();
+  ctx.setLineDash([]);
+
+  // === DATI ===
+  var am = document.getElementById('autoModello').value.trim();
+  var at = document.getElementById('autoTarga').value.trim().toUpperCase();
+  var nm = document.getElementById('nome').value.trim();
+  var aR = document.getElementById('arrivo').value;
+  var pR = document.getElementById('partenza').value;
+  var arr = aR ? formatDate(aR) : '';
+  var par = pR ? formatDate(pR) : '';
+  var prezzo = '\u20AC' + PREZZI[currentCategory][currentDurata] + ',00';
+  var tLabel = 'TICKET ' + currentDurata;
+  var cLabel = currentCategory === 'grande' ? '  (GRANDE)' : '';
+
+  var dsY = sepY + 16;
+  var rH = 90;
+  var lX = 70;
+  var eX = W - 70;
+
+  var righe = [
+    {l:'AUTO', v:am, v2:at},
+    {l:'CLIENTE', v:nm},
   ];
+  righe.push({l:'ARRIVO', v:arr});
+  righe.push({l:'PARTENZA', v:par});
+  righe.push({l:'TIPO', v:tLabel+cLabel});
+  righe.push({l:'IMPORTO', v:prezzo, hi:true});
 
-  let y = tableY + headerH;
-  righe.forEach((riga, idx) => {
-    // Sfondo riga
-    if (riga.highlight) {
-      ctx.fillStyle = '#fff8f0';
-    } else {
-      ctx.fillStyle = idx % 2 === 0 ? '#ffffff' : '#faf9f5';
+  righe.forEach(function(r, i) {
+    var y = dsY + i * rH;
+    if (i > 0) {
+      ctx.strokeStyle = '#e8e3db'; ctx.lineWidth = 1;
+      ctx.setLineDash([4,3]);
+      ctx.beginPath(); ctx.moveTo(lX,y); ctx.lineTo(eX,y); ctx.stroke();
+      ctx.setLineDash([]);
     }
-    ctx.fillRect(tableX, y, tableW, rowH);
-
-    // Bordi
-    ctx.strokeStyle = '#1a2a52';
-    ctx.lineWidth = 2.5;
-    ctx.strokeRect(tableX, y, tableW, rowH);
-
-    // Separatore colonne
-    ctx.beginPath();
-    ctx.moveTo(tableX + labelColW, y);
-    ctx.lineTo(tableX + labelColW, y + rowH);
-    ctx.lineWidth = 2.5;
-    ctx.stroke();
-
     // Label
-    ctx.fillStyle = '#1a2a52';
-    ctx.font = '600 34px "Inter", Arial, sans-serif';
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    if (riga.labelMultiline) {
-      const parts = riga.label.split('\n');
-      ctx.fillText(parts[0], tableX + labelColW / 2, y + rowH / 2 - 22);
-      ctx.fillText(parts[1], tableX + labelColW / 2, y + rowH / 2 + 22);
-    } else {
-      ctx.fillText(riga.label, tableX + labelColW / 2, y + rowH / 2);
-    }
+    ctx.fillStyle = '#8a8378';
+    ctx.font = '26px "Bebas Neue", sans-serif';
+    ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
+    ctx.fillText(r.l, lX, y+rH/2);
 
-    // Valore
-    ctx.textAlign = 'left';
-    const valX = tableX + labelColW + 24;
-    if (riga.highlight) {
-      ctx.fillStyle = '#ff5a0f';
-      ctx.font = '700 42px "Oswald", Arial, sans-serif';
-      ctx.fillText(riga.value, valX, y + rowH / 2 + 2);
-    } else if (riga.value2) {
-      ctx.fillStyle = '#111';
-      ctx.font = '500 36px "Inter", Arial, sans-serif';
-      ctx.fillText(riga.value, valX, y + rowH / 2 - 22);
-      ctx.font = '700 32px "Inter", Arial, sans-serif';
-      ctx.fillStyle = '#444';
-      ctx.fillText(riga.value2, valX, y + rowH / 2 + 22);
+    // Value
+    if (r.hi) {
+      ctx.fillStyle = '#e8561d';
+      ctx.font = '50px "Bebas Neue", sans-serif';
+      ctx.textAlign = 'right';
+      ctx.fillText(r.v, eX, y+rH/2+2);
+    } else if (r.v2) {
+      ctx.fillStyle = '#1a2a52';
+      ctx.font = '700 34px "DM Sans", sans-serif';
+      ctx.textAlign = 'right';
+      ctx.fillText(r.v, eX, y+rH/2-18);
+      ctx.fillStyle = '#8a8378';
+      ctx.font = '500 28px "DM Sans", sans-serif';
+      ctx.fillText(r.v2, eX, y+rH/2+18);
     } else {
-      ctx.fillStyle = '#111';
-      ctx.font = '500 36px "Inter", Arial, sans-serif';
-      ctx.fillText(riga.value, valX, y + rowH / 2);
+      ctx.fillStyle = '#1a2a52';
+      ctx.font = '700 34px "DM Sans", sans-serif';
+      ctx.textAlign = 'right';
+      ctx.fillText(r.v, eX, y+rH/2);
     }
-
-    y += rowH;
   });
 
-  // Footer
-  ctx.fillStyle = '#999';
-  ctx.font = '400 20px "Inter", Arial, sans-serif';
-  ctx.textAlign = 'center';
-  ctx.fillText('Conservare fino al ritiro del veicolo', W / 2, y + 45);
+  // === CONFERMA ===
+  var confY = dsY + righe.length * rH + 20;
 
-  ctx.fillStyle = '#ff6a1f';
-  ctx.font = '700 16px "Oswald", Arial, sans-serif';
-  ctx.fillText('★  GARAGE CEGLIE  ★', W / 2, y + 78);
+  // Linea
+  ctx.strokeStyle = '#d4cfc7'; ctx.lineWidth = 1.5;
+  ctx.setLineDash([6,4]);
+  ctx.beginPath(); ctx.moveTo(lX, confY); ctx.lineTo(eX, confY); ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Box conferma
+  var boxY = confY + 16;
+  var boxH = 110;
+  ctx.fillStyle = '#eef3eb';
+  roundRect(ctx, lX, boxY, eX-lX, boxH, 10);
+  ctx.fill();
+  ctx.strokeStyle = '#a8c494'; ctx.lineWidth = 1.5;
+  roundRect(ctx, lX, boxY, eX-lX, boxH, 10);
+  ctx.stroke();
+
+  ctx.fillStyle = '#3a6b24';
+  ctx.font = '700 22px "DM Sans", sans-serif';
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.fillText('\u2713  PRENOTAZIONE CONFERMATA', W/2, boxY + 32);
+
+  ctx.fillStyle = '#4a7a34';
+  ctx.font = '400 18px "DM Sans", sans-serif';
+  ctx.fillText('Posto garantito per le date indicate.', W/2, boxY + 62);
+  ctx.fillText('Presentare questo ticket all\'arrivo.', W/2, boxY + 86);
+
+  // === CONDIZIONI ===
+  var condY = boxY + boxH + 24;
+  ctx.fillStyle = '#b0a89e';
+  ctx.font = '400 17px "DM Sans", sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText('Prenotazione non rimborsabile.', W/2, condY);
+
+  // === CONTATTI ===
+  var contY = condY + 36;
+  ctx.fillStyle = '#1a2a52';
+  ctx.fillRect(lX, contY, eX-lX, 2);
+
+  ctx.fillStyle = '#8a8378';
+  ctx.font = '400 19px "DM Sans", sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText('Per informazioni e assistenza:', W/2, contY + 30);
+
+  ctx.fillStyle = '#1a2a52';
+  ctx.font = '700 24px "DM Sans", sans-serif';
+  ctx.fillText('\uD83D\uDCDE  +39 080 523 3972', W/2, contY + 62);
+
+  ctx.fillStyle = '#25d366';
+  ctx.font = '600 20px "DM Sans", sans-serif';
+  ctx.fillText('Contattaci su WhatsApp', W/2, contY + 92);
+
+  // === FOOTER ===
+  var footY = contY + 120;
+  ctx.fillStyle = '#1a2a52';
+  ctx.font = '24px "Bebas Neue", sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText('\u2605  GARAGE CEGLIE  \u2605', W/2, footY);
+
+  // Perforazione decorativa
+  for (var py=80; py<H-50; py+=28) {
+    ctx.fillStyle = '#f8f5f0';
+    ctx.beginPath(); ctx.arc(36,py,4,0,Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.arc(W-36,py,4,0,Math.PI*2); ctx.fill();
+  }
 
   // Preview
-  const preview = document.getElementById('preview');
+  var preview = document.getElementById('preview');
   preview.innerHTML = '';
-  const img = new Image();
+  var img = new Image();
   img.src = canvas.toDataURL('image/jpeg', 0.95);
   preview.appendChild(img);
-
   document.getElementById('shareHint').style.display = 'block';
   document.getElementById('waBtn').style.display = 'block';
-  document.getElementById('shareHint').scrollIntoView({ behavior: 'smooth', block: 'center' });
+  setTimeout(function(){ preview.scrollIntoView({behavior:'smooth',block:'start'}); }, 100);
 }
 
-// ============ CONDIVISIONE ============
 function tentaCondivisione() {
-  const canvas = document.getElementById('canvas');
-  canvas.toBlob(blob => {
-    const nome = (document.getElementById('nome').value || 'ticket').replace(/\s+/g, '-').toLowerCase();
-    const filename = `garage-ceglie-${nome}.jpg`;
-    const file = new File([blob], filename, { type: 'image/jpeg' });
-
-    // Web Share API (funziona da HTTPS, es. GitHub Pages)
+  var canvas = document.getElementById('canvas');
+  canvas.toBlob(function(blob) {
+    var nome = (document.getElementById('nome').value || 'ticket').replace(/\s+/g,'-').toLowerCase();
+    var filename = 'garage-ceglie-' + nome + '.jpg';
+    var file = new File([blob], filename, {type:'image/jpeg'});
     if (navigator.share && navigator.canShare) {
       try {
-        if (navigator.canShare({ files: [file] })) {
-          navigator.share({ files: [file], title: 'Ticket Garage Ceglie' })
-            .catch(err => {
-              if (err.name !== 'AbortError') showToast('Tieni premuto sull\'immagine per condividerla');
-            });
+        if (navigator.canShare({files:[file]})) {
+          navigator.share({files:[file], title:'Ticket Garage Ceglie'})
+            .catch(function(err){ if(err.name!=='AbortError') showToast("Tieni premuto l'immagine per condividerla"); });
           return;
         }
-      } catch(e) {}
+      } catch(e){}
     }
-    // Fallback: prova download, altrimenti avvisa
     try {
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = filename;
-      a.click();
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement('a');
+      a.href = url; a.download = filename; a.click();
       URL.revokeObjectURL(url);
-      showToast('Se non si è scaricata: tieni premuto sull\'immagine → Salva');
-    } catch(e) {
-      showToast('Tieni premuto sull\'immagine → Condividi / Salva');
-    }
+      showToast("Se non si \u00E8 scaricata: tieni premuto l'immagine \u2192 Salva");
+    } catch(e) { showToast("Tieni premuto l'immagine \u2192 Condividi / Salva"); }
   }, 'image/jpeg', 0.95);
 }
 
 function showToast(msg) {
-  let t = document.getElementById('toast');
+  var t = document.getElementById('toast');
   if (!t) {
     t = document.createElement('div');
     t.id = 'toast';
-    t.style.cssText = 'position:fixed;bottom:30px;left:16px;right:16px;background:#25d366;color:#fff;padding:16px 20px;border-radius:12px;font-size:14px;font-weight:600;text-align:center;z-index:999;box-shadow:0 6px 20px rgba(0,0,0,0.4);transition:opacity 0.3s;font-family:inherit;';
+    t.style.cssText = 'position:fixed;bottom:30px;left:16px;right:16px;background:#1a2a52;color:#fff;padding:16px 20px;border-radius:12px;font-size:14px;font-weight:600;text-align:center;z-index:999;box-shadow:0 6px 20px rgba(0,0,0,0.3);font-family:"DM Sans",sans-serif;transition:opacity 0.3s;';
     document.body.appendChild(t);
   }
-  t.textContent = msg;
-  t.style.opacity = '1';
-  setTimeout(() => { t.style.opacity = '0'; }, 4000);
+  t.textContent = msg; t.style.opacity = '1';
+  setTimeout(function(){ t.style.opacity = '0'; }, 4000);
 }
 
 function reset() {
-  ['autoModello','autoTarga','nome','arrivo','partenza'].forEach(id => {
-    document.getElementById(id).value = '';
-  });
+  ['autoModello','autoTarga','nome','arrivo','partenza'].forEach(function(id){ document.getElementById(id).value = ''; });
   currentDurata = null;
   setCategory('standard');
   document.getElementById('catHint').textContent = '';
   document.getElementById('preview').innerHTML = '';
   document.getElementById('shareHint').style.display = 'none';
   document.getElementById('waBtn').style.display = 'none';
+  window.scrollTo({top:0, behavior:'smooth'});
 }
 </script>
-
 </body>
 </html>
