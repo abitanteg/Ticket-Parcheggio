@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Garage Ceglie">
+<title>Garage Ceglie - Ticket</title>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    margin: 0;
+    padding: 16px 16px 40px;
+    background: #0f0f10;
+    color: #fff;
+    min-height: 100vh;
+  }
+  h1 {
+    font-family: 'Oswald', sans-serif;
+    font-size: 24px;
+    font-weight: 800;
+    margin: 0 0 4px;
+    text-align: center;
+    color: #1a2a52;
+    letter-spacing: 1px;
+    -webkit-text-stroke: 0.5px #ff6a1f;
+  }
+  .subtitle {
+    text-align: center;
+    font-size: 11px;
+    color: #666;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+  }
+  .field { margin-bottom: 12px; }
+  label {
+    display: block;
+    font-size: 11px;
+    color: #888;
+    margin-bottom: 5px;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    font-weight: 600;
+  }
+  input {
+    width: 100%;
+    padding: 12px 14px;
+    font-size: 16px;
+    border: 1px solid #2e2e35;
+    border-radius: 10px;
+    background: #17171a;
+    color: #fff;
+    -webkit-appearance: none;
+    font-family: inherit;
+  }
+  input:focus { outline: none; border-color: #ff6a1f; }
+  input[type="date"] { color-scheme: dark; }
+  .row { display: flex; gap: 10px; }
+  .row .field { flex: 1; }
+
+  /* Durata buttons */
+  .duration-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+  .dur-btn {
+    padding: 14px 6px;
+    border: 2px solid #2e2e35;
+    border-radius: 10px;
+    background: #17171a;
+    color: #aaa;
+    font-family: 'Oswald', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .dur-btn .price {
+    display: block;
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    margin-top: 2px;
+    color: #666;
+  }
+  .dur-btn.active {
+    border-color: #ff6a1f;
+    background: #2a1a10;
+    color: #ff6a1f;
+  }
+  .dur-btn.active .price { color: #ff6a1f; }
+
+  /* Category toggle */
+  .cat-toggle {
+    display: flex;
+    gap: 0;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 2px solid #2e2e35;
+    margin-bottom: 12px;
+  }
+  .cat-btn {
+    flex: 1;
+    padding: 12px 8px;
+    background: #17171a;
+    color: #888;
+    border: none;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.15s;
+  }
+  .cat-btn.active {
+    background: #1a2a52;
+    color: #fff;
+  }
+  .cat-auto-hint {
+    font-size: 11px;
+    color: #555;
+    text-align: center;
+    margin-top: -8px;
+    margin-bottom: 12px;
+  }
+
+  /* Buttons */
+  button.main {
+    width: 100%;
+    padding: 15px;
+    font-size: 16px;
+    font-weight: 600;
+    border: none;
+    border-radius: 10px;
+    background: #ff6a1f;
+    color: #fff;
+    margin-top: 6px;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  button.main:active { background: #e55a10; }
+  button.whatsapp {
+    width: 100%;
+    padding: 15px;
+    font-size: 16px;
+    font-weight: 600;
+    border: none;
+    border-radius: 10px;
+    background: #25d366;
+    color: #fff;
+    margin-top: 8px;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  button.whatsapp:active { background: #1ea952; }
+  button.secondary {
+    width: 100%;
+    padding: 14px;
+    font-size: 15px;
+    font-weight: 600;
+    border: 1px solid #2e2e35;
+    border-radius: 10px;
+    background: #17171a;
+    color: #ccc;
+    margin-top: 6px;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  button.ghost {
+    width: 100%;
+    padding: 12px;
+    background: transparent;
+    border: 1px solid #2e2e35;
+    border-radius: 10px;
+    color: #666;
+    font-size: 14px;
+    font-weight: 500;
+    margin-top: 6px;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  #preview {
+    margin-top: 18px;
+    text-align: center;
+  }
+  #preview img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 10px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+  }
+</style>
+</head>
+<body>
+
+<h1>GARAGE CEGLIE</h1>
+<div class="subtitle">Generatore ticket prenotazione</div>
+
+<div class="field">
+  <label>Auto (modello)</label>
+  <input id="autoModello" type="text" placeholder="es. BMW X1" autocomplete="off" oninput="autoDetectCategory()">
+</div>
+
+<div class="field">
+  <label>Targa</label>
+  <input id="autoTarga" type="text" placeholder="es. GV733SW" autocomplete="off" style="text-transform:uppercase">
+</div>
+
+<div class="field">
+  <label>Nome</label>
+  <input id="nome" type="text" placeholder="es. La Rezza" autocomplete="off">
+</div>
+
+<div class="row">
+  <div class="field">
+    <label>Arrivo</label>
+    <input id="arrivo" type="date" autocomplete="off">
+  </div>
+  <div class="field">
+    <label>Partenza</label>
+    <input id="partenza" type="date" autocomplete="off">
+  </div>
+</div>
+
+<label>Categoria veicolo</label>
+<div class="cat-toggle">
+  <button class="cat-btn active" onclick="setCategory('standard')" id="catStd">Standard</button>
+  <button class="cat-btn" onclick="setCategory('grande')" id="catGrande">Grande / SUV / Premium</button>
+</div>
+<div class="cat-auto-hint" id="catHint"></div>
+
+<label>Durata ticket</label>
+<div class="duration-grid" id="durGrid"></div>
+
+<button class="main" onclick="genera()">Genera ticket</button>
+<button class="ghost" onclick="reset()">Pulisci tutto</button>
+
+<div id="preview"></div>
+<div id="shareHint" style="display:none; background:#1a2a1a; border:1px solid #25d366; border-radius:12px; padding:14px 18px; margin-top:12px; text-align:center;">
+  <div style="font-size:14px; font-weight:600; color:#25d366; margin-bottom:4px;">📱 Tieni premuto sull'immagine qui sopra</div>
+  <div style="font-size:12px; color:#aaa;">→ "Condividi immagine" per WhatsApp<br>→ "Salva immagine" per la galleria</div>
+</div>
+<button class="whatsapp" onclick="tentaCondivisione()" id="waBtn" style="display:none">📱 Condividi</button>
+
+<canvas id="canvas" width="900" height="1280" style="display:none"></canvas>
+
+<script>
+// ============ LISTINO ============
+const PREZZI = {
+  standard: { '12H': 30, '18H': 35, '24H': 40, '48H': 70, '72H': 100, '96H': 140 },
+  grande:   { '12H': 35, '18H': 40, '24H': 45, '48H': 75, '72H': 110, '96H': 150 }
+};
+const DURATE = ['12H','18H','24H','48H','72H','96H'];
+
+// Modelli "grandi"
+const GRANDI_KEYWORDS = [
+  '7 posti','7posti','pickup','pick-up','pick up',
+  'x7','x6','x5','q7','q8','gle','gls','espace','touareg','velar','a8',
+  'wrangler','5008','jaguar','freemont','evo7','xc90','xc 90',
+  'range rover','range','defender','sport','byd',
+  'porsche','cayenne','macan','panamera','taycan','911','718','cayman','boxster',
+  'grand cherokee','cherokee','freelander','maserati',
+  'ghibli','levante','grecale','quattroporte',
+  'urus','bentayga','cullinan',
+  'escalade','navigator','tahoe','suburban',
+  'gl','gla','glb','glc','g class','classe g','amg gt',
+  'q5','q3','e-tron','etron',
+  'tiguan allspace','atlas','id.4','id4',
+  'cx-60','cx60','cx-90','cx90',
+  'tucson','santa fe','sorento','sportage',
+  'rav4','highlander','land cruiser',
+  'discovery','evoque','velar',
+  'xc40','xc60',
+  'peugeot 3008','peugeot 5008','3008',
+  'duster','koleos',
+  'c5 aircross','c5x',
+  'forester','outback',
+  'compass','renegade',
+  'alfa stelvio','stelvio',
+  'tonale'
+];
+
+let currentCategory = 'standard';
+let currentDurata = null;
+
+function renderDurate() {
+  const grid = document.getElementById('durGrid');
+  grid.innerHTML = '';
+  DURATE.forEach(d => {
+    const btn = document.createElement('div');
+    btn.className = 'dur-btn' + (currentDurata === d ? ' active' : '');
+    btn.innerHTML = `${d}<span class="price">€${PREZZI[currentCategory][d]}</span>`;
+    btn.onclick = () => { currentDurata = d; renderDurate(); };
+    grid.appendChild(btn);
+  });
+}
+
+function setCategory(cat) {
+  currentCategory = cat;
+  document.getElementById('catStd').className = 'cat-btn' + (cat === 'standard' ? ' active' : '');
+  document.getElementById('catGrande').className = 'cat-btn' + (cat === 'grande' ? ' active' : '');
+  renderDurate();
+}
+
+function autoDetectCategory() {
+  const val = document.getElementById('autoModello').value.toLowerCase().trim();
+  if (!val) { document.getElementById('catHint').textContent = ''; return; }
+
+  const isGrande = GRANDI_KEYWORDS.some(kw => val.includes(kw));
+  if (isGrande) {
+    setCategory('grande');
+    document.getElementById('catHint').textContent = '⬆ Rilevato veicolo grande/premium';
+  } else {
+    setCategory('standard');
+    document.getElementById('catHint').textContent = '';
+  }
+}
+
+// Init
+renderDurate();
+
+// ============ HELPERS ============
+function formatDate(isoDate) {
+  const [y, m, d] = isoDate.split('-');
+  return parseInt(d) + '/' + parseInt(m);
+}
+
+// ============ GENERATORE CANVAS ============
+function genera() {
+  if (!currentDurata) { alert('Seleziona la durata del ticket'); return; }
+
+  const canvas = document.getElementById('canvas');
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width;
+  const H = canvas.height;
+
+  // Sfondo carta
+  const grad = ctx.createLinearGradient(0, 0, 0, H);
+  grad.addColorStop(0, '#fdfdfb');
+  grad.addColorStop(1, '#f5f4ee');
+  ctx.fillStyle = grad;
+  ctx.fillRect(0, 0, W, H);
+
+  // Bordo nastro adesivo
+  ctx.fillStyle = 'rgba(210, 200, 160, 0.5)';
+  ctx.fillRect(40, 35, W - 80, 16);
+  ctx.fillStyle = 'rgba(180, 170, 130, 0.25)';
+  ctx.fillRect(40, 48, W - 80, 3);
+
+  // Linea decorativa sopra titolo
+  ctx.fillStyle = '#ff6a1f';
+  ctx.fillRect(W/2 - 120, 90, 240, 4);
+
+  // Titolo
+  ctx.fillStyle = '#1a2a52';
+  ctx.font = '800 78px "Oswald", "Arial Black", sans-serif';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'alphabetic';
+  ctx.fillText('GARAGE CEGLIE', W / 2, 172);
+
+  // Ombra rossa dietro il titolo (effetto insegna)
+  ctx.save();
+  ctx.fillStyle = 'rgba(255, 106, 31, 0.15)';
+  ctx.font = '800 78px "Oswald", "Arial Black", sans-serif';
+  ctx.fillText('GARAGE CEGLIE', W / 2 + 2, 174);
+  ctx.restore();
+  // Riscrivi sopra pulito
+  ctx.fillStyle = '#1a2a52';
+  ctx.font = '800 78px "Oswald", "Arial Black", sans-serif';
+  ctx.fillText('GARAGE CEGLIE', W / 2, 172);
+
+  // Sottotitolo
+  ctx.fillStyle = '#ff6a1f';
+  ctx.font = '700 30px "Oswald", Arial, sans-serif';
+  ctx.fillText('VIA MELO, 10/14  ·  BARI', W / 2, 212);
+
+  // Linea sotto
+  ctx.fillStyle = '#1a2a52';
+  ctx.fillRect(W/2 - 80, 232, 160, 2);
+
+  // === TABELLA ===
+  const tableX = 70;
+  const tableY = 270;
+  const tableW = W - 140;
+  const headerH = 70;
+  const rowH = 105;
+  const labelColW = 260;
+  const numRows = 6; // Auto, Nome, Arrivo, Partenza, Ticket, Prezzo
+
+  // Ombra tabella
+  ctx.fillStyle = 'rgba(0,0,0,0.06)';
+  ctx.fillRect(tableX + 5, tableY + 5, tableW, headerH + rowH * numRows);
+
+  // Header "Prenotazione"
+  const hGrad = ctx.createLinearGradient(tableX, tableY, tableX, tableY + headerH);
+  hGrad.addColorStop(0, '#ff7a2f');
+  hGrad.addColorStop(1, '#ff5a0f');
+  ctx.fillStyle = hGrad;
+  ctx.fillRect(tableX, tableY, tableW, headerH);
+  ctx.strokeStyle = '#1a2a52';
+  ctx.lineWidth = 3;
+  ctx.strokeRect(tableX, tableY, tableW, headerH);
+
+  ctx.fillStyle = '#fff';
+  ctx.font = '700 40px "Oswald", Arial, sans-serif';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.letterSpacing = '2px';
+  ctx.fillText('PRENOTAZIONE', tableX + tableW / 2, tableY + headerH / 2 + 2);
+
+  // Dati
+  const autoModello = document.getElementById('autoModello').value.trim();
+  const autoTarga = document.getElementById('autoTarga').value.trim().toUpperCase();
+  const nome = document.getElementById('nome').value.trim();
+  const arrivoRaw = document.getElementById('arrivo').value;
+  const partenzaRaw = document.getElementById('partenza').value;
+  const arrivo = arrivoRaw ? formatDate(arrivoRaw) : '';
+  const partenza = partenzaRaw ? formatDate(partenzaRaw) : '';
+  const prezzo = '€' + PREZZI[currentCategory][currentDurata] + ',00';
+  const ticketLabel = 'Ticket ' + currentDurata;
+  const catLabel = currentCategory === 'grande' ? ' (grande)' : '';
+
+  const righe = [
+    { label: 'Auto', value: autoModello, value2: autoTarga },
+    { label: 'Nome', value: nome },
+    { label: 'Giorno\narrivo', value: arrivo, labelMultiline: true },
+    { label: 'Giorno\npartenza', value: partenza, labelMultiline: true },
+    { label: 'Ticket', value: ticketLabel + catLabel },
+    { label: 'Importo', value: prezzo, highlight: true }
+  ];
+
+  let y = tableY + headerH;
+  righe.forEach((riga, idx) => {
+    // Sfondo riga
+    if (riga.highlight) {
+      ctx.fillStyle = '#fff8f0';
+    } else {
+      ctx.fillStyle = idx % 2 === 0 ? '#ffffff' : '#faf9f5';
+    }
+    ctx.fillRect(tableX, y, tableW, rowH);
+
+    // Bordi
+    ctx.strokeStyle = '#1a2a52';
+    ctx.lineWidth = 2.5;
+    ctx.strokeRect(tableX, y, tableW, rowH);
+
+    // Separatore colonne
+    ctx.beginPath();
+    ctx.moveTo(tableX + labelColW, y);
+    ctx.lineTo(tableX + labelColW, y + rowH);
+    ctx.lineWidth = 2.5;
+    ctx.stroke();
+
+    // Label
+    ctx.fillStyle = '#1a2a52';
+    ctx.font = '600 34px "Inter", Arial, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    if (riga.labelMultiline) {
+      const parts = riga.label.split('\n');
+      ctx.fillText(parts[0], tableX + labelColW / 2, y + rowH / 2 - 22);
+      ctx.fillText(parts[1], tableX + labelColW / 2, y + rowH / 2 + 22);
+    } else {
+      ctx.fillText(riga.label, tableX + labelColW / 2, y + rowH / 2);
+    }
+
+    // Valore
+    ctx.textAlign = 'left';
+    const valX = tableX + labelColW + 24;
+    if (riga.highlight) {
+      ctx.fillStyle = '#ff5a0f';
+      ctx.font = '700 42px "Oswald", Arial, sans-serif';
+      ctx.fillText(riga.value, valX, y + rowH / 2 + 2);
+    } else if (riga.value2) {
+      ctx.fillStyle = '#111';
+      ctx.font = '500 36px "Inter", Arial, sans-serif';
+      ctx.fillText(riga.value, valX, y + rowH / 2 - 22);
+      ctx.font = '700 32px "Inter", Arial, sans-serif';
+      ctx.fillStyle = '#444';
+      ctx.fillText(riga.value2, valX, y + rowH / 2 + 22);
+    } else {
+      ctx.fillStyle = '#111';
+      ctx.font = '500 36px "Inter", Arial, sans-serif';
+      ctx.fillText(riga.value, valX, y + rowH / 2);
+    }
+
+    y += rowH;
+  });
+
+  // Footer
+  ctx.fillStyle = '#999';
+  ctx.font = '400 20px "Inter", Arial, sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText('Conservare fino al ritiro del veicolo', W / 2, y + 45);
+
+  ctx.fillStyle = '#ff6a1f';
+  ctx.font = '700 16px "Oswald", Arial, sans-serif';
+  ctx.fillText('★  GARAGE CEGLIE  ★', W / 2, y + 78);
+
+  // Preview
+  const preview = document.getElementById('preview');
+  preview.innerHTML = '';
+  const img = new Image();
+  img.src = canvas.toDataURL('image/jpeg', 0.95);
+  preview.appendChild(img);
+
+  document.getElementById('shareHint').style.display = 'block';
+  document.getElementById('waBtn').style.display = 'block';
+  document.getElementById('shareHint').scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+// ============ CONDIVISIONE ============
+function tentaCondivisione() {
+  const canvas = document.getElementById('canvas');
+  canvas.toBlob(blob => {
+    const nome = (document.getElementById('nome').value || 'ticket').replace(/\s+/g, '-').toLowerCase();
+    const filename = `garage-ceglie-${nome}.jpg`;
+    const file = new File([blob], filename, { type: 'image/jpeg' });
+
+    // Web Share API (funziona da HTTPS, es. GitHub Pages)
+    if (navigator.share && navigator.canShare) {
+      try {
+        if (navigator.canShare({ files: [file] })) {
+          navigator.share({ files: [file], title: 'Ticket Garage Ceglie' })
+            .catch(err => {
+              if (err.name !== 'AbortError') showToast('Tieni premuto sull\'immagine per condividerla');
+            });
+          return;
+        }
+      } catch(e) {}
+    }
+    // Fallback: prova download, altrimenti avvisa
+    try {
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      a.click();
+      URL.revokeObjectURL(url);
+      showToast('Se non si è scaricata: tieni premuto sull\'immagine → Salva');
+    } catch(e) {
+      showToast('Tieni premuto sull\'immagine → Condividi / Salva');
+    }
+  }, 'image/jpeg', 0.95);
+}
+
+function showToast(msg) {
+  let t = document.getElementById('toast');
+  if (!t) {
+    t = document.createElement('div');
+    t.id = 'toast';
+    t.style.cssText = 'position:fixed;bottom:30px;left:16px;right:16px;background:#25d366;color:#fff;padding:16px 20px;border-radius:12px;font-size:14px;font-weight:600;text-align:center;z-index:999;box-shadow:0 6px 20px rgba(0,0,0,0.4);transition:opacity 0.3s;font-family:inherit;';
+    document.body.appendChild(t);
+  }
+  t.textContent = msg;
+  t.style.opacity = '1';
+  setTimeout(() => { t.style.opacity = '0'; }, 4000);
+}
+
+function reset() {
+  ['autoModello','autoTarga','nome','arrivo','partenza'].forEach(id => {
+    document.getElementById(id).value = '';
+  });
+  currentDurata = null;
+  setCategory('standard');
+  document.getElementById('catHint').textContent = '';
+  document.getElementById('preview').innerHTML = '';
+  document.getElementById('shareHint').style.display = 'none';
+  document.getElementById('waBtn').style.display = 'none';
+}
+</script>
+
+</body>
+</html>
