@@ -67,10 +67,6 @@
   }
   .field input:focus { outline: none; border-color: var(--navy); }
   .field input[type="date"] { color-scheme: light; }
-  .field .optional {
-    font-size: 10px; color: var(--text-light);
-    text-transform: none; letter-spacing: 0; font-weight: 400;
-  }
   .row { display: flex; gap: 10px; }
   .row .field { flex: 1; }
   .cat-toggle {
@@ -165,7 +161,6 @@
     <input id="nome" type="text" placeholder="Cognome o nome" autocomplete="off">
   </div>
 
-
   <div class="section-label">Periodo</div>
   <div class="row">
     <div class="field">
@@ -210,7 +205,7 @@
   <button class="btn-reset" onclick="reset()">Pulisci tutto</button>
 </div>
 
-<canvas id="canvas" width="1000" height="1750" style="display:none"></canvas>
+<canvas id="canvas" style="display:none"></canvas>
 
 <script>
 var PREZZI = {
@@ -264,17 +259,6 @@ function autoDetectCategory() {
   else { setCategory('standard'); document.getElementById('catHint').textContent = ''; }
 }
 renderDurate();
-initCounter();
-
-function formatDate(iso) {
-  var p = iso.split('-');
-  return parseInt(p[2]) + '/' + parseInt(p[1]) + '/' + p[0];
-}
-function formatDateFull(iso) {
-  var p = iso.split('-');
-  return p[2] + '/' + p[1] + '/' + p[0];
-}
-function padZero(n) { return n < 10 ? '0' + n : '' + n; }
 
 function getNextBookingNumber() {
   var current = parseInt(localStorage.getItem('gc_ticket_counter') || '0');
@@ -302,7 +286,13 @@ function setCounter() {
     initCounter();
   }
 }
+initCounter();
 
+function formatDate(iso) {
+  var p = iso.split('-');
+  return parseInt(p[2]) + '/' + parseInt(p[1]) + '/' + p[0];
+}
+function padZero(n) { return n < 10 ? '0' + n : '' + n; }
 function getEmissionDateTime() {
   var now = new Date();
   var d = padZero(now.getDate()) + '/' + padZero(now.getMonth()+1) + '/' + now.getFullYear();
@@ -319,89 +309,23 @@ function roundRect(ctx, x, y, w, h, r) {
   ctx.quadraticCurveTo(x,y,x+r,y); ctx.closePath();
 }
 
-function wrapText(ctx, text, x, maxW, lineH) {
-  var words = text.split(' ');
-  var line = '';
-  var y = 0;
-  var lines = [];
-  for (var i = 0; i < words.length; i++) {
-    var test = line + words[i] + ' ';
-    if (ctx.measureText(test).width > maxW && line !== '') {
-      lines.push(line.trim());
-      line = words[i] + ' ';
-    } else {
-      line = test;
-    }
-  }
-  lines.push(line.trim());
-  return lines;
-}
-
 function genera() {
   if (!currentDurata) { alert('Seleziona la durata del ticket'); return; }
 
   var canvas = document.getElementById('canvas');
   var ctx = canvas.getContext('2d');
-  var W = canvas.width, H = canvas.height;
-  var bookingNum = getNextBookingNumber();
-  var bookingId = formatBookingId(bookingNum);
-  var emesso = getEmissionDateTime();
+  var W = 1080;
+  var margin = 40;
+  var innerW = W - margin * 2;
+  var lX = 80;
+  var eX = W - 80;
 
-  // Sfondo
-  ctx.fillStyle = '#f8f5f0';
-  ctx.fillRect(0,0,W,H);
+  // Calcola altezza dinamica
+  var hH = 240; // header
+  var numSectionH = 140; // numero prenotazione
+  var rH = 120; // altezza riga dati
 
-  // Bordo esterno
-  ctx.strokeStyle = '#d4cfc7'; ctx.lineWidth = 3;
-  ctx.strokeRect(24,24,W-48,H-48);
-
-  // Bordo interno sottile
-  ctx.strokeStyle = '#e8e3db'; ctx.lineWidth = 1;
-  ctx.strokeRect(36,36,W-72,H-72);
-
-  // === HEADER ===
-  var hH = 200;
-  ctx.fillStyle = '#1a2a52';
-  ctx.fillRect(36,36,W-72,hH);
-
-  // Riga arancione
-  ctx.fillStyle = '#e8561d';
-  ctx.fillRect(36,36+hH,W-72,6);
-
-  // Titolo
-  ctx.fillStyle = '#fff';
-  ctx.font = '88px "Bebas Neue", sans-serif';
-  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-  ctx.fillText('GARAGE CEGLIE', W/2, 36+hH/2-20);
-
-  // Indirizzo
-  ctx.fillStyle = '#e8561d';
-  ctx.font = '28px "Bebas Neue", sans-serif';
-  ctx.fillText('VIA MELO, 10/14  \u00B7  BARI', W/2, 36+hH/2+38);
-
-  // === NUMERO PRENOTAZIONE ===
-  var numY = 36+hH+6+28;
-  ctx.fillStyle = '#8a8378';
-  ctx.font = '500 20px "DM Sans", sans-serif';
-  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-  ctx.fillText('Prenotazione n.', W/2, numY);
-
-  ctx.fillStyle = '#1a2a52';
-  ctx.font = '700 32px "DM Sans", sans-serif';
-  ctx.fillText(bookingId, W/2, numY + 38);
-
-  ctx.fillStyle = '#b0a89e';
-  ctx.font = '400 18px "DM Sans", sans-serif';
-  ctx.fillText('Emesso il ' + emesso, W/2, numY + 72);
-
-  // Linea separatrice
-  var sepY = numY + 100;
-  ctx.strokeStyle = '#d4cfc7'; ctx.lineWidth = 1.5;
-  ctx.setLineDash([6,4]);
-  ctx.beginPath(); ctx.moveTo(70, sepY); ctx.lineTo(W-70, sepY); ctx.stroke();
-  ctx.setLineDash([]);
-
-  // === DATI ===
+  // Dati
   var am = document.getElementById('autoModello').value.trim();
   var at = document.getElementById('autoTarga').value.trim().toUpperCase();
   var nm = document.getElementById('nome').value.trim();
@@ -412,20 +336,74 @@ function genera() {
   var prezzo = '\u20AC' + PREZZI[currentCategory][currentDurata] + ',00';
   var tLabel = 'TICKET ' + currentDurata;
   var cLabel = currentCategory === 'grande' ? '  (GRANDE)' : '';
-
-  var dsY = sepY + 16;
-  var rH = 90;
-  var lX = 70;
-  var eX = W - 70;
+  var bookingNum = getNextBookingNumber();
+  var bookingId = formatBookingId(bookingNum);
+  var emesso = getEmissionDateTime();
 
   var righe = [
     {l:'AUTO', v:am, v2:at},
     {l:'CLIENTE', v:nm},
+    {l:'ARRIVO', v:arr},
+    {l:'PARTENZA', v:par},
+    {l:'TIPO', v:tLabel+cLabel},
+    {l:'IMPORTO', v:prezzo, hi:true}
   ];
-  righe.push({l:'ARRIVO', v:arr});
-  righe.push({l:'PARTENZA', v:par});
-  righe.push({l:'TIPO', v:tLabel+cLabel});
-  righe.push({l:'IMPORTO', v:prezzo, hi:true});
+
+  var dataH = righe.length * rH;
+  var footerH = 360;
+  var totalH = margin + hH + 6 + numSectionH + dataH + footerH + margin;
+
+  canvas.width = W;
+  canvas.height = totalH;
+  var H = totalH;
+
+  // === SFONDO ===
+  ctx.fillStyle = '#f8f5f0';
+  ctx.fillRect(0, 0, W, H);
+  ctx.strokeStyle = '#d4cfc7'; ctx.lineWidth = 3;
+  ctx.strokeRect(margin-4, margin-4, W-margin*2+8, H-margin*2+8);
+  ctx.strokeStyle = '#e8e3db'; ctx.lineWidth = 1;
+  ctx.strokeRect(margin, margin, innerW, H-margin*2);
+
+  // === HEADER ===
+  ctx.fillStyle = '#1a2a52';
+  ctx.fillRect(margin, margin, innerW, hH);
+  ctx.fillStyle = '#e8561d';
+  ctx.fillRect(margin, margin+hH, innerW, 6);
+
+  ctx.fillStyle = '#fff';
+  ctx.font = '100px "Bebas Neue", sans-serif';
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.fillText('GARAGE CEGLIE', W/2, margin+hH/2-20);
+
+  ctx.fillStyle = '#e8561d';
+  ctx.font = '34px "Bebas Neue", sans-serif';
+  ctx.fillText('VIA MELO, 10/14  \u00B7  BARI', W/2, margin+hH/2+45);
+
+  // === NUMERO PRENOTAZIONE ===
+  var numY = margin + hH + 6 + 35;
+  ctx.fillStyle = '#8a8378';
+  ctx.font = '500 26px "DM Sans", sans-serif';
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.fillText('Prenotazione n.', W/2, numY);
+
+  ctx.fillStyle = '#1a2a52';
+  ctx.font = '700 46px "DM Sans", sans-serif';
+  ctx.fillText(bookingId, W/2, numY + 48);
+
+  ctx.fillStyle = '#b0a89e';
+  ctx.font = '400 22px "DM Sans", sans-serif';
+  ctx.fillText('Emesso il ' + emesso, W/2, numY + 88);
+
+  // Separatore
+  var sepY = numY + 120;
+  ctx.strokeStyle = '#d4cfc7'; ctx.lineWidth = 1.5;
+  ctx.setLineDash([6,4]);
+  ctx.beginPath(); ctx.moveTo(lX, sepY); ctx.lineTo(eX, sepY); ctx.stroke();
+  ctx.setLineDash([]);
+
+  // === DATI ===
+  var dsY = sepY + 10;
 
   righe.forEach(function(r, i) {
     var y = dsY + i * rH;
@@ -435,29 +413,30 @@ function genera() {
       ctx.beginPath(); ctx.moveTo(lX,y); ctx.lineTo(eX,y); ctx.stroke();
       ctx.setLineDash([]);
     }
+
     // Label
     ctx.fillStyle = '#8a8378';
-    ctx.font = '26px "Bebas Neue", sans-serif';
+    ctx.font = '34px "Bebas Neue", sans-serif';
     ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
     ctx.fillText(r.l, lX, y+rH/2);
 
     // Value
     if (r.hi) {
       ctx.fillStyle = '#e8561d';
-      ctx.font = '50px "Bebas Neue", sans-serif';
+      ctx.font = '64px "Bebas Neue", sans-serif';
       ctx.textAlign = 'right';
       ctx.fillText(r.v, eX, y+rH/2+2);
     } else if (r.v2) {
       ctx.fillStyle = '#1a2a52';
-      ctx.font = '700 34px "DM Sans", sans-serif';
+      ctx.font = '700 42px "DM Sans", sans-serif';
       ctx.textAlign = 'right';
-      ctx.fillText(r.v, eX, y+rH/2-18);
+      ctx.fillText(r.v, eX, y+rH/2-22);
       ctx.fillStyle = '#8a8378';
-      ctx.font = '500 28px "DM Sans", sans-serif';
-      ctx.fillText(r.v2, eX, y+rH/2+18);
+      ctx.font = '500 34px "DM Sans", sans-serif';
+      ctx.fillText(r.v2, eX, y+rH/2+22);
     } else {
       ctx.fillStyle = '#1a2a52';
-      ctx.font = '700 34px "DM Sans", sans-serif';
+      ctx.font = '700 42px "DM Sans", sans-serif';
       ctx.textAlign = 'right';
       ctx.fillText(r.v, eX, y+rH/2);
     }
@@ -465,70 +444,64 @@ function genera() {
 
   // === CONFERMA ===
   var confY = dsY + righe.length * rH + 20;
-
-  // Linea
   ctx.strokeStyle = '#d4cfc7'; ctx.lineWidth = 1.5;
   ctx.setLineDash([6,4]);
   ctx.beginPath(); ctx.moveTo(lX, confY); ctx.lineTo(eX, confY); ctx.stroke();
   ctx.setLineDash([]);
 
-  // Box conferma
   var boxY = confY + 16;
-  var boxH = 110;
+  var boxH = 130;
   ctx.fillStyle = '#eef3eb';
-  roundRect(ctx, lX, boxY, eX-lX, boxH, 10);
-  ctx.fill();
+  roundRect(ctx, lX, boxY, eX-lX, boxH, 10); ctx.fill();
   ctx.strokeStyle = '#a8c494'; ctx.lineWidth = 1.5;
-  roundRect(ctx, lX, boxY, eX-lX, boxH, 10);
-  ctx.stroke();
+  roundRect(ctx, lX, boxY, eX-lX, boxH, 10); ctx.stroke();
 
   ctx.fillStyle = '#3a6b24';
-  ctx.font = '700 22px "DM Sans", sans-serif';
+  ctx.font = '700 28px "DM Sans", sans-serif';
   ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-  ctx.fillText('\u2713  PRENOTAZIONE CONFERMATA', W/2, boxY + 32);
+  ctx.fillText('\u2713  PRENOTAZIONE CONFERMATA', W/2, boxY + 38);
 
   ctx.fillStyle = '#4a7a34';
-  ctx.font = '400 18px "DM Sans", sans-serif';
-  ctx.fillText('Posto garantito per le date indicate.', W/2, boxY + 62);
-  ctx.fillText('Presentare questo ticket all\'arrivo.', W/2, boxY + 86);
+  ctx.font = '400 22px "DM Sans", sans-serif';
+  ctx.fillText('Posto garantito per le date indicate.', W/2, boxY + 74);
+  ctx.fillText('Presentare questo ticket all\'arrivo.', W/2, boxY + 102);
 
   // === CONDIZIONI ===
-  var condY = boxY + boxH + 24;
+  var condY = boxY + boxH + 28;
   ctx.fillStyle = '#b0a89e';
-  ctx.font = '400 17px "DM Sans", sans-serif';
+  ctx.font = '400 22px "DM Sans", sans-serif';
   ctx.textAlign = 'center';
   ctx.fillText('Prenotazione non rimborsabile.', W/2, condY);
 
   // === CONTATTI ===
-  var contY = condY + 36;
+  var contY = condY + 40;
   ctx.fillStyle = '#1a2a52';
   ctx.fillRect(lX, contY, eX-lX, 2);
 
   ctx.fillStyle = '#8a8378';
-  ctx.font = '400 19px "DM Sans", sans-serif';
+  ctx.font = '400 24px "DM Sans", sans-serif';
   ctx.textAlign = 'center';
-  ctx.fillText('Per informazioni e assistenza:', W/2, contY + 30);
+  ctx.fillText('Per informazioni e assistenza:', W/2, contY + 36);
 
   ctx.fillStyle = '#1a2a52';
-  ctx.font = '700 24px "DM Sans", sans-serif';
-  ctx.fillText('\uD83D\uDCDE  +39 080 523 3972', W/2, contY + 62);
+  ctx.font = '700 30px "DM Sans", sans-serif';
+  ctx.fillText('\uD83D\uDCDE  +39 080 523 3972', W/2, contY + 74);
 
   ctx.fillStyle = '#25d366';
-  ctx.font = '600 20px "DM Sans", sans-serif';
-  ctx.fillText('Contattaci su WhatsApp', W/2, contY + 92);
+  ctx.font = '600 24px "DM Sans", sans-serif';
+  ctx.fillText('Contattaci su WhatsApp', W/2, contY + 108);
 
   // === FOOTER ===
-  var footY = contY + 120;
   ctx.fillStyle = '#1a2a52';
-  ctx.font = '24px "Bebas Neue", sans-serif';
+  ctx.font = '28px "Bebas Neue", sans-serif';
   ctx.textAlign = 'center';
-  ctx.fillText('\u2605  GARAGE CEGLIE  \u2605', W/2, footY);
+  ctx.fillText('\u2605  GARAGE CEGLIE  \u2605', W/2, contY + 148);
 
-  // Perforazione decorativa
-  for (var py=80; py<H-50; py+=28) {
+  // Perforazione
+  for (var py = margin+20; py < H-margin; py += 28) {
     ctx.fillStyle = '#f8f5f0';
-    ctx.beginPath(); ctx.arc(36,py,4,0,Math.PI*2); ctx.fill();
-    ctx.beginPath(); ctx.arc(W-36,py,4,0,Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.arc(margin, py, 4, 0, Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.arc(W-margin, py, 4, 0, Math.PI*2); ctx.fill();
   }
 
   // Preview
